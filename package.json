@@ -1,0 +1,14 @@
+{
+  "name": "zap-whatsapp-webjs",
+  "version": "1.0.0",
+  "description": "Projeto para enviar mensagens pelo WhatsApp usando whatsapp-web.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "venom-bot": "^5.3.0"
+  }
+}
