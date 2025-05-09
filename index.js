@@ -1,13 +1,15 @@
 const venom = require('venom-bot');
 
+
 venom
   .create({
     session: 'w3c-bot',
-    browserArgs: ['--headless=new']
+    headless: true,
+    browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
   .then((client) => start(client))
-  .catch((error) => {
-    console.error('Erro ao iniciar o Venom:', error);
+  .catch((erro) => {
+    console.log('Erro ao iniciar o Venom:', erro);
   });
 function start(client) {
   const numero = '5581983191149'; // Sem o @c.us aqui
