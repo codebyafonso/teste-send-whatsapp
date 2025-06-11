@@ -1,5 +1,13 @@
+const express = require('express');
+const bodyParser = require('body-parser');
 const venom = require('venom-bot');
 
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+let venomClient = null;
 
 venom
   .create({
@@ -7,20 +15,30 @@ venom
     headless: true,
     browserArgs: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
-  .then((client) => start(client))
+  .then((client) => {
+    venomClient = client;
+    console.log('Venom iniciado com sucesso!');
+  })
   .catch((erro) => {
     console.log('Erro ao iniciar o Venom:', erro);
   });
-function start(client) {
-  const numero = '5581983191149'; // Sem o @c.us aqui
-  const mensagem = 'Olá! Esta mensagem foi enviada automaticamente com Venom';
 
-  client
-    .sendText(`${numero}@c.us`, mensagem)
-    .then((result) => {
-      console.log('Mensagem enviada com sucesso!', result);
-    })
-    .catch((error) => {
-      console.error('Erro ao enviar mensagem:', error);
-    });
-}
+app.post('/send', async (req, res) => {
+  if (!venomClient) {
+    return res.status(503).json({ error: 'Venom não está pronto ainda.' });
+  }
+  const { numero, mensagem } = req.body;
+  if (!numero || !mensagem) {
+    return res.status(400).json({ error: 'Número e mensagem são obrigatórios.' });
+  }
+  try {
+    const result = await venomClient.sendText(`${numero}@c.us`, mensagem);
+    res.json({ sucesso: true, result });
+  } catch (error) {
+    res.status(500).json({ sucesso: false, error: error.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`API rodando na porta ${PORT}`);
+});
