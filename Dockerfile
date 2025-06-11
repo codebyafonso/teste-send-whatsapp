@@ -7,12 +7,16 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3 \
+    libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar dependências
+# Instalar sharp especificamente para Linux x64
+RUN npm install --platform=linux --arch=x64 sharp
+
+# Instalar outras dependências
 RUN npm install --production --no-optional --no-audit --no-fund
 
 # Estágio final
@@ -43,6 +47,7 @@ RUN apt-get update && apt-get install -y \
 ENV CHROME_BIN=/usr/bin/chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV NODE_ENV=production
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=true
 
 WORKDIR /usr/src/app
 
