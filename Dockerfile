@@ -3,6 +3,12 @@ FROM node:18-slim AS builder
 
 WORKDIR /usr/src/app
 
+# Instalar dependências necessárias para o sharp
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copiar package.json e package-lock.json
 COPY package*.json ./
 
@@ -12,7 +18,7 @@ RUN npm install --production --no-optional --no-audit --no-fund
 # Estágio final
 FROM node:18-slim
 
-# Instalar dependências do Chrome
+# Instalar dependências do Chrome e sharp
 RUN apt-get update && apt-get install -y \
     chromium \
     libx11-xcb1 \
@@ -30,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
     libgtk-3-0 \
+    libvips-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Definir variáveis de ambiente
